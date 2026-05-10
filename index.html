@@ -9,23 +9,37 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: flex-start;
+            min-height: 100vh;
             margin: 0;
             background-color: #ffe4e1;
+            /* Fondo con patrón de puntos rosados */
+            background-image: 
+                radial-gradient(#ffb6c1 20%, transparent 20%),
+                radial-gradient(#ffb6c1 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
             text-align: center;
-            overflow: hidden;
+            overflow-x: hidden;
+            padding-top: 80px; /* Suficiente espacio para que el título se vea bien en el celu */
+            box-sizing: border-box;
         }
+
         #contenedor {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             max-width: 400px;
             width: 90%;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 40px;
         }
-        h1 { color: #d63384; font-size: 24px; }
+
+        h1 { color: #d63384; font-size: 24px; margin-top: 0; }
         .botones { margin-top: 20px; position: relative; height: 60px; }
+        
         button {
             padding: 10px 25px;
             font-size: 18px;
@@ -33,15 +47,37 @@
             border-radius: 10px;
             border: none;
             transition: 0.3s;
+            touch-action: manipulation;
         }
+        
         #btnSi { background-color: #ff69b4; color: white; }
         #btnNo {
             background-color: #6c757d;
             color: white;
             position: absolute;
+            transition: all 0.2s ease;
         }
+        
         .oculto { display: none; }
-        img { width: 100%; border-radius: 15px; margin-top: 15px; }
+        img { width: 100%; border-radius: 15px; margin-top: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+        /* Corazones animados */
+        .corazon-flotante {
+            position: fixed;
+            color: #ff69b4;
+            font-size: 20px;
+            opacity: 0.6;
+            animation: flotar 5s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -56,8 +92,8 @@
         </div>
 
         <div id="mensajeFinal" class="oculto">
-            <h1>feliz día de la mamá mamis.</h1>
-            <p>gracias por todo mamis te quiero mucho</p>
+            <h1>feliz día de la mamá mamis!! ❤️</h1>
+            <p style="color: #555; font-size: 17px;">gracias por todo mamis te quiero mucho</p>
             <img src="nuestra_foto.jpg" alt="Nosotros">
         </div>
     </div>
@@ -69,20 +105,40 @@
         const mensajeFinal = document.getElementById('mensajeFinal');
 
         function moverBoton() {
-            const x = Math.random() * (window.innerWidth - btnNo.clientWidth);
-            const y = Math.random() * (window.innerHeight - btnNo.clientHeight);
+            // Ajuste para que no se salga de los bordes de la pantalla
+            const x = Math.random() * (window.innerWidth - btnNo.clientWidth - 40) + 20;
+            const y = Math.random() * (window.innerHeight - btnNo.clientHeight - 40) + 20;
             btnNo.style.left = x + 'px';
             btnNo.style.top = y + 'px';
         }
 
         btnNo.addEventListener('mouseover', moverBoton);
-        btnNo.addEventListener('touchstart', moverBoton);
+        btnNo.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moverBoton();
+        });
 
         btnSi.addEventListener('click', () => {
             pregunta.classList.add('oculto');
             mensajeFinal.classList.remove('oculto');
             document.body.style.backgroundColor = "#ffc0cb";
+            document.body.style.paddingTop = "20px"; // Se centra un poco más al mostrar la foto
         });
+
+        function crearCorazones() {
+            const numCorazones = 15;
+            for (let i = 0; i < numCorazones; i++) {
+                const corazon = document.createElement('div');
+                corazon.classList.add('corazon-flotante');
+                corazon.innerText = '❤️';
+                corazon.style.left = Math.random() * 100 + 'vw';
+                corazon.style.animationDelay = Math.random() * 5 + 's';
+                corazon.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                document.body.appendChild(corazon);
+            }
+        }
+
+        crearCorazones();
     </script>
 </body>
 </html>
